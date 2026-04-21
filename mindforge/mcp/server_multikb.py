@@ -362,7 +362,7 @@ KB_TOOLS: list[Tool] = [
         name="kb_select",
         description="Select (activate) a knowledge base by ID. All search operations will target this KB until another is selected.",
         inputSchema={
-            "type": "object",
+            "type": "type": "object",
             "properties": {
                 "id": {
                     "type": "string",
