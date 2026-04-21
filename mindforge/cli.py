@@ -133,6 +133,30 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Output directory containing the knowledge base (default: output)",
     )
 
+    # --- eval ---
+    ev = subparsers.add_parser(
+        "eval",
+        help="Run the evaluation harness against a fixture corpus",
+    )
+    ev.add_argument(
+        "--fixtures",
+        type=Path,
+        default=Path("eval/fixtures"),
+        help="Fixture directory containing *.md + *.gt.yaml pairs",
+    )
+    ev.add_argument(
+        "--reports",
+        type=Path,
+        default=Path("eval/reports"),
+        help="Where to write JSON reports (default: eval/reports)",
+    )
+    ev.add_argument(
+        "--mode",
+        choices=["heuristic", "llm"],
+        default="heuristic",
+        help="Extraction mode (default: heuristic)",
+    )
+
     # --- show ---
     show = subparsers.add_parser(
         "show",
@@ -251,6 +275,29 @@ def cmd_stats(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_eval(args: argparse.Namespace) -> int:
+    """Run the evaluation harness and write a JSON report."""
+    from datetime import datetime, timezone
+
+    from mindforge.eval.runner import render_markdown, run_eval
+
+    if not args.fixtures.is_dir():
+        print(f"Fixtures directory not found: {args.fixtures}", file=sys.stderr)
+        return 1
+
+    report = run_eval(args.fixtures, mode=args.mode)
+    print(render_markdown(report))
+
+    args.reports.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    import json
+    (args.reports / f"{stamp}.json").write_text(
+        json.dumps(report, indent=2),
+        encoding="utf-8",
+    )
+    return 0
+
+
 def cmd_show(args: argparse.Namespace) -> int:
     """Show a single concept, optionally with source citations."""
     from mindforge.distillation.concept import ConceptStore
@@ -309,6 +356,7 @@ def main() -> int:
         "stats": cmd_stats,
         "mcp": cmd_mcp,
         "show": cmd_show,
+        "eval": cmd_eval,
     }
 
     handler = commands.get(args.command)
