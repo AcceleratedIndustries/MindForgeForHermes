@@ -234,16 +234,15 @@ def cmd_stats(args: argparse.Namespace) -> int:
 
 
 def cmd_mcp(args: argparse.Namespace) -> int:
-    """Start the MCP server."""
+    """Start the multi-KB MCP server.
+
+    The server reads MINDFORGE_ROOT from the environment (defaults to
+    ~/.mindforge). The legacy --output flag is kept for backwards
+    compatibility but no longer gates server startup.
+    """
     from mindforge.mcp.server import create_server
 
     config = MindForgeConfig(output_dir=args.output)
-
-    manifest = config.output_dir / "concepts.json"
-    if not manifest.exists():
-        print("No knowledge base found. Run 'mindforge ingest' first.", file=sys.stderr)
-        return 1
-
     server = create_server(config)
     server.run()
     return 0
