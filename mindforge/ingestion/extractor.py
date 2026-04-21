@@ -25,6 +25,7 @@ class RawConcept:
     source_files: list[str] = field(default_factory=list)
     extraction_method: str = "unknown"
     confidence: float = 0.5
+    source_hash: str = ""  # Content hash for tracking modifications
 
 
 # Patterns that indicate a definition or explanation
