@@ -279,4 +279,6 @@ mindforge mcp --output path/to/knowledge-base
 
 ## License
 
-GPL-3.0-or-later. See [LICENSE](LICENSE) for details.
+Business Source License 1.1 (BUSL-1.1). See [LICENSE](LICENSE) for details.
+
+In short: free for any use except offering MindForge as a hosted or embedded service that competes with Accelerated Industries' paid offerings. Each release auto-converts to the Apache License 2.0 on April 21, 2028.
